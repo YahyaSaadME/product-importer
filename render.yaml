@@ -17,10 +17,7 @@ services:
           name: product-importer-redis
           property: connectionString
       - key: API_CORS_ORIGINS
-        fromService:
-          type: web
-          name: product-importer-web
-          property: url
+        value: https://product-importer-web-n555.onrender.com
       - key: UPLOAD_DIR
         value: /tmp/product-imports
       - key: CELERY_CONCURRENCY
@@ -34,10 +31,7 @@ services:
     plan: free
     envVars:
       - key: API_URL
-        fromService:
-          type: web
-          name: product-importer-api
-          property: url
+        value: https://product-importer-api-sxbf.onrender.com
 
   - type: keyvalue
     name: product-importer-redis
