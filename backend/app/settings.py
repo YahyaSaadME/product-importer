@@ -10,7 +10,7 @@ class Settings(BaseSettings):
     database_url: str = "postgresql+asyncpg://postgres:postgres@postgres:5432/products"
     redis_url: str = "redis://redis:6379/0"
     upload_dir: Path = Path("/tmp/product-imports")
-    csv_batch_size: int = 1000
+    csv_batch_size: int = 500
 
     model_config = SettingsConfigDict(env_file=".env", env_file_encoding="utf-8")
 

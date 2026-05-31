@@ -47,8 +47,11 @@ def import_products(job_id: str, csv_path: str) -> None:
                 )
                 session.execute(upsert)
                 session.commit()
+                session.expunge_all()
                 processed += len(batch)
-                _set_job(job_id, stage="Importing products", processed_rows=processed)
+                # Update progress every 10 000 rows to avoid hammering the DB
+                if processed % 10_000 < settings.csv_batch_size:
+                    _set_job(job_id, stage="Importing products", processed_rows=processed)
 
         _set_job(job_id, status="complete", stage="Import complete", processed_rows=processed)
         _emit_event("products.imported", {"job_id": job_id, "processed_rows": processed})
