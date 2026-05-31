@@ -1,0 +1,44 @@
+services:
+  - type: web
+    name: product-importer-api
+    runtime: docker
+    rootDir: backend
+    plan: starter
+    healthCheckPath: /health
+    envVars:
+      - key: DATABASE_URL
+        fromDatabase:
+          name: product-importer-postgres
+          property: connectionString
+      - key: REDIS_URL
+        fromService:
+          type: keyvalue
+          name: product-importer-redis
+          property: connectionString
+      - key: API_CORS_ORIGINS
+        value: https://product-importer-web.onrender.com
+      - key: UPLOAD_DIR
+        value: /tmp/product-imports
+
+  - type: web
+    name: product-importer-web
+    runtime: docker
+    rootDir: frontend
+    plan: starter
+    envVars:
+      - key: NEXT_PUBLIC_API_URL
+        value: https://product-importer-api.onrender.com
+
+  - type: keyvalue
+    name: product-importer-redis
+    plan: starter
+    maxmemoryPolicy: allkeys-lru
+    ipAllowList:
+      - source: 0.0.0.0/0
+        description: everywhere
+
+databases:
+  - name: product-importer-postgres
+    plan: starter
+    databaseName: products
+    user: product_importer
