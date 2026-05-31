@@ -1,9 +1,9 @@
 services:
   - type: web
     name: product-importer-api
-    runtime: docker
-    dockerfilePath: ./backend/Dockerfile
-    dockerContext: ./backend
+    runtime: image
+    image:
+      url: docker.io/yahyasaadme/product-importer-api:latest
     plan: starter
     healthCheckPath: /health
     envVars:
@@ -25,9 +25,9 @@ services:
 
   - type: web
     name: product-importer-web
-    runtime: docker
-    dockerfilePath: ./frontend/Dockerfile
-    dockerContext: ./frontend
+    runtime: image
+    image:
+      url: docker.io/yahyasaadme/product-importer-web:latest
     plan: starter
     envVars:
       - key: NEXT_PUBLIC_API_URL
