@@ -1,10 +1,10 @@
 services:
   - type: web
     name: product-importer-api
-    runtime: image
-    image:
-      url: docker.io/yahyasaadme/product-importer-api:latest
-    plan: starter
+    runtime: docker
+    dockerfilePath: ./backend/Dockerfile
+    dockerContext: ./backend
+    plan: free
     healthCheckPath: /health
     envVars:
       - key: DATABASE_URL
@@ -21,21 +21,21 @@ services:
       - key: UPLOAD_DIR
         value: /tmp/product-imports
       - key: CELERY_CONCURRENCY
-        value: "2"
+        value: "1"
 
   - type: web
     name: product-importer-web
-    runtime: image
-    image:
-      url: docker.io/yahyasaadme/product-importer-web:latest
-    plan: starter
+    runtime: docker
+    dockerfilePath: ./frontend/Dockerfile
+    dockerContext: ./frontend
+    plan: free
     envVars:
       - key: NEXT_PUBLIC_API_URL
         value: https://product-importer-api.onrender.com
 
   - type: keyvalue
     name: product-importer-redis
-    plan: starter
+    plan: free
     maxmemoryPolicy: allkeys-lru
     ipAllowList:
       - source: 0.0.0.0/0
@@ -43,6 +43,6 @@ services:
 
 databases:
   - name: product-importer-postgres
-    plan: starter
+    plan: free
     databaseName: products
     user: product_importer
