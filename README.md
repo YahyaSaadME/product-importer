@@ -32,7 +32,13 @@ docker compose up --build
 Then open:
 
 - Frontend: http://localhost:3000
-- API docs: http://localhost:8000/docs
+- API docs: http://localhost:8010/docs
+
+If you run the frontend outside Docker with `npm run dev`, create `frontend/.env.local`:
+
+```env
+NEXT_PUBLIC_API_URL=http://localhost:8010
+```
 
 ## Tests
 
@@ -42,9 +48,36 @@ python -m pytest
 
 ## Render Deployment
 
-1. Push this repository to GitHub.
-2. In Render, create a Blueprint instance from the repository.
-3. Render reads `render.yaml` and creates the API, Next.js web service, Redis, and PostgreSQL.
-4. After the services are created, update `API_CORS_ORIGINS` and `NEXT_PUBLIC_API_URL` if Render generated different service URLs.
+This project is configured for Render Blueprint deployment from Docker Hub images.
+
+1. Log in to Docker Hub locally:
+
+```powershell
+docker login
+```
+
+2. Replace the image namespace in `render.yaml` with your Docker Hub username or organization:
+
+```powershell
+.\scripts\update-render-dockerhub.ps1 -Namespace YOUR_DOCKERHUB_USERNAME
+```
+
+3. Build and push the API and frontend images:
+
+```powershell
+.\scripts\push-dockerhub.ps1 -Namespace YOUR_DOCKERHUB_USERNAME
+```
+
+The frontend image is built with:
+
+```text
+NEXT_PUBLIC_API_URL=https://product-importer-api.onrender.com
+```
+
+4. Push this repository to GitHub.
+5. In Render, create a Blueprint instance from the repository.
+6. Render reads `render.yaml`, pulls the two Docker Hub images, and creates the API, frontend web service, Redis-compatible Key Value instance, and PostgreSQL database.
+
+If you use private Docker Hub images, add Docker Hub registry credentials in Render and add `image.creds.fromRegistryCreds` to both image entries in `render.yaml`.
 
 The backend container starts FastAPI and a Celery worker together so uploaded CSV files remain available to the worker on Render. For higher-volume production deployments, move uploads to object storage and split the worker into its own Render service.

@@ -2,15 +2,15 @@ services:
   postgres:
     image: postgres:16-alpine
     environment:
-      POSTGRES_DB: products
-      POSTGRES_USER: postgres
-      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: ${POSTGRES_DB:-products}
+      POSTGRES_USER: ${POSTGRES_USER:-postgres}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-postgres}
     ports:
       - "5432:5432"
     volumes:
       - postgres-data:/var/lib/postgresql/data
     healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U postgres -d products"]
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER:-postgres} -d ${POSTGRES_DB:-products}"]
       interval: 5s
       timeout: 5s
       retries: 10
@@ -22,13 +22,10 @@ services:
 
   api:
     build: ./backend
-    environment:
-      DATABASE_URL: postgresql+asyncpg://postgres:postgres@postgres:5432/products
-      REDIS_URL: redis://redis:6379/0
-      API_CORS_ORIGINS: http://localhost:3000,http://127.0.0.1:3000
-      UPLOAD_DIR: /tmp/product-imports
+    env_file:
+      - .env
     ports:
-      - "8000:8000"
+      - "${API_HOST_PORT:-8010}:8000"
     depends_on:
       postgres:
         condition: service_healthy
@@ -38,12 +35,19 @@ services:
   frontend:
     build:
       context: ./frontend
-    environment:
-      NEXT_PUBLIC_API_URL: http://localhost:8000
+      args:
+        NEXT_PUBLIC_API_URL: ${NEXT_PUBLIC_API_URL:-http://localhost:8010}
+    env_file:
+      - .env
     ports:
-      - "3000:3000"
+      - "${FRONTEND_HOST_PORT:-3001}:3000"
     depends_on:
       - api
+
+  webhook-tester:
+    build: ./webhook_tester
+    ports:
+      - "8001:8001"
 
 volumes:
   postgres-data:

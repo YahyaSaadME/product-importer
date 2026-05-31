@@ -1,8 +1,9 @@
 services:
   - type: web
     name: product-importer-api
-    runtime: docker
-    rootDir: backend
+    runtime: image
+    image:
+      url: docker.io/YOUR_DOCKERHUB_USERNAME/product-importer-api:latest
     plan: starter
     healthCheckPath: /health
     envVars:
@@ -22,8 +23,9 @@ services:
 
   - type: web
     name: product-importer-web
-    runtime: docker
-    rootDir: frontend
+    runtime: image
+    image:
+      url: docker.io/YOUR_DOCKERHUB_USERNAME/product-importer-web:latest
     plan: starter
     envVars:
       - key: NEXT_PUBLIC_API_URL

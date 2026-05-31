@@ -341,7 +341,18 @@ export default function Home() {
         </div>
         <div className="pagination">
           <button disabled={page === 1} onClick={() => loadProducts(page - 1)}>Previous</button>
-          <span>Page {page}</span>
+          {(() => {
+            const totalPages = Math.ceil(products.total / products.page_size) || 1;
+            const startRow = products.total === 0 ? 0 : (page - 1) * products.page_size + 1;
+            const endRow = Math.min(page * products.page_size, products.total);
+            return (
+              <>
+                <span>
+                  Page {page} of {totalPages} | Rows {startRow}-{endRow} of {products.total}
+                </span>
+              </>
+            );
+          })()}
           <button disabled={page * products.page_size >= products.total} onClick={() => loadProducts(page + 1)}>Next</button>
         </div>
       </section>
