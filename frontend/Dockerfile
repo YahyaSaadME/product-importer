@@ -5,7 +5,7 @@ RUN npm install
 
 FROM node:20-alpine AS builder
 WORKDIR /app
-ARG NEXT_PUBLIC_API_URL=https://product-importer-api.onrender.com
+ARG NEXT_PUBLIC_API_URL=https://product-importer-api-sxbf.onrender.com
 ENV NEXT_TELEMETRY_DISABLED=1 \
     NEXT_PUBLIC_API_URL=${NEXT_PUBLIC_API_URL}
 COPY --from=deps /app/node_modules ./node_modules
@@ -13,7 +13,7 @@ COPY . .
 RUN npm run build
 
 FROM node:20-alpine AS runner
-ARG NEXT_PUBLIC_API_URL=https://product-importer-api.onrender.com
+ARG NEXT_PUBLIC_API_URL=https://product-importer-api-sxbf.onrender.com
 WORKDIR /app
 ENV NODE_ENV=production \
     NEXT_TELEMETRY_DISABLED=1 \
