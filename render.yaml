@@ -1,9 +1,9 @@
 services:
   - type: web
     name: product-importer-api
-    runtime: image
-    image:
-      url: docker.io/YOUR_DOCKERHUB_USERNAME/product-importer-api:latest
+    runtime: docker
+    dockerfilePath: ./backend/Dockerfile
+    dockerContext: ./backend
     plan: starter
     healthCheckPath: /health
     envVars:
@@ -20,12 +20,14 @@ services:
         value: https://product-importer-web.onrender.com
       - key: UPLOAD_DIR
         value: /tmp/product-imports
+      - key: CELERY_CONCURRENCY
+        value: "2"
 
   - type: web
     name: product-importer-web
-    runtime: image
-    image:
-      url: docker.io/YOUR_DOCKERHUB_USERNAME/product-importer-web:latest
+    runtime: docker
+    dockerfilePath: ./frontend/Dockerfile
+    dockerContext: ./frontend
     plan: starter
     envVars:
       - key: NEXT_PUBLIC_API_URL

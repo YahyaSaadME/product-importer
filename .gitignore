@@ -1,15 +1,24 @@
+# Python
 __pycache__/
 *.py[cod]
 .pytest_cache/
 .venv/
+
+# Secrets — never commit these
 .env
 .env.local
 frontend/.env.local
+
+# Node / Next.js
 node_modules/
 .next/
 out/
 dist/
 coverage/
+
+# OS
 .DS_Store
-*.log
+
+# Local upload staging
 product-imports/
+*.log
