@@ -1,4 +1,4 @@
-export const API_BASE = process.env.NEXT_PUBLIC_API_URL || "http://localhost:8010";
+export const API_BASE = "/api-proxy";
 
 export type Product = {
   id: number;
